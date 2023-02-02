@@ -130,7 +130,7 @@ const TodosList = () => {
               </label>{" "}
               {currentTodo.published ? "Published" : "Pending"}
             </div>
-            
+
             <Link
               to={"/Todos/" + currentTodo.id}
               className="bg-warning badge link-dark">

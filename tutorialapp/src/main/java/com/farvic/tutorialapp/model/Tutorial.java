@@ -1,4 +1,4 @@
-package com.farvic.todoapp.model;
+package com.farvic.tutorialapp.model;
 
 import org.springframework.data.annotation.Id;
 
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 // @Entity
 @Component
-@Document(collection = "todos")
-public class Todo {
+@Document(collection = "tutorials")
+public class Tutorial {
     @Id
     private String id;
 
@@ -17,14 +17,14 @@ public class Todo {
     private String description;
     private boolean published;
 
-    public Todo(String title, String description, boolean published) {
+    public Tutorial(String title, String description, boolean published) {
         this.title = title;
         this.description = description;
         this.published = published;
 
     }
 
-    public Todo() {
+    public Tutorial() {
 
     }
 
@@ -58,6 +58,6 @@ public class Todo {
 
     @Override
     public String toString() {
-        return "Todo [id=" + id + ", title=" + title + ", desc=" + description + ", published=" + published + "]";
+        return "Tutorial [id=" + id + ", title=" + title + ", desc=" + description + ", published=" + published + "]";
     }
 }
