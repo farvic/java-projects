@@ -8,19 +8,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.Map.*;
 
 
-
- @CrossOrigin(origins = "http://localhost:28852")
+@CrossOrigin(origins = "http://localhost:28852")
 @RestController
-@RequestMapping("/seats")
+//@RequestMapping("/seats")
 public class SeatController {
 
     SeatRepository seatRepository;
@@ -52,13 +53,38 @@ public class SeatController {
      // }
      }
 
-    @GetMapping()
+     @PostMapping("/purchase")
+        public ResponseEntity<Object> purchaseSeat(@RequestBody Seat seat) {
+//            LOGGER.info("REQUEST: seat: " + seat.toString());
+            HashMap<String, Object> responseBody = new HashMap<>();
+
+
+            Seat _seat = seatRepository.findByRowAndColumn(seat.getRow(), seat.getColumn());
+
+            if (_seat == null) {
+                responseBody.put("error", "The number of a row or a column is out of bounds!");
+                    return new ResponseEntity<>(responseBody,HttpStatus.BAD_REQUEST);
+
+            }
+            if (_seat.isAvailable()) {
+                _seat.setIsAvailable(false);
+                seatRepository.save(_seat);
+                responseBody.putAll(Map.of("row",_seat.getRow(),"column",_seat.getColumn(),"price",_seat.getPrice()));
+                return new ResponseEntity<>(responseBody, HttpStatus.OK);
+            } else {
+                responseBody.put("error", "The ticket has been already purchased!");
+                return new ResponseEntity<>(responseBody,HttpStatus.BAD_REQUEST);
+            }
+
+     }
+
+    @GetMapping("/seats")
     public ResponseEntity<Room> findByAvailability() {
         try {
             List<SeatDto> availableSeats = new ArrayList<>();
             LOGGER.info("VEIO CÁ");
             seatRepository.findAllByIsAvailable(true).forEach((seat) -> {
-                availableSeats.add(new SeatDto(seat.getRow(), seat.getColumn()));
+                availableSeats.add(new SeatDto(seat.getRow(), seat.getColumn(), seat.getPrice()));
             });
             LOGGER.info("availableSeats: " + availableSeats.toString());
             if (availableSeats.isEmpty()) {

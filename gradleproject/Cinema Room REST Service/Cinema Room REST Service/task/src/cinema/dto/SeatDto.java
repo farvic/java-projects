@@ -10,9 +10,13 @@ public class SeatDto {
     @JsonProperty("column")
     private int column;
 
-    public SeatDto(int row, int column) {
+    @JsonProperty("price")
+    private int price;
+
+    public SeatDto(int row, int column, int price) {
         this.row = row;
         this.column = column;
+        this.price = price;
     }
 
     public int getRow() {
@@ -31,4 +35,11 @@ public class SeatDto {
         this.column = column;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 }

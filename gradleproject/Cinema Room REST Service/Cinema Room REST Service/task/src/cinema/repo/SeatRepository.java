@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface SeatRepository extends CrudRepository<Seat, Long> {
 
+    Seat findByRowAndColumn(int row, int column);
+
     List<Seat> findAllByIsAvailable(boolean isAvailable);
 
 }
