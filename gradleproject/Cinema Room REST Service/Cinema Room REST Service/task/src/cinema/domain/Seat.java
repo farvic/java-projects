@@ -1,6 +1,10 @@
 package cinema.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,6 +13,7 @@ public class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seat_id")
+    @JsonIgnore
     private long id;
     @Column(name = "seat_row")
     private int row;
@@ -18,8 +23,16 @@ public class Seat {
     @Column(name = "price")
     private int price;
 
-    @Column(name = "is_available")
+
+    @Column(name = "available")
+
     private boolean isAvailable;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "cinema_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private Cinema cinema;
 
     protected Seat() {
     }
@@ -27,13 +40,8 @@ public class Seat {
     public Seat(int row, int column) {
         this.row = row;
         this.column = column;
-    }
-    public Seat(int row, int column, int price) {
-        this.row = row;
-        this.column = column;
         this.price = price;
     }
-
     public Seat(int row, int column, int price, boolean isAvailable) {
         this.row = row;
         this.column = column;
@@ -57,13 +65,6 @@ public class Seat {
         this.price = price;
     }
 
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public void setIsAvailable(boolean isAvailable) {
-        this.isAvailable = isAvailable;
-    }
 
     public int getRow() {
         return row;
@@ -81,10 +82,20 @@ public class Seat {
         this.column = column;
     }
 
+    @JsonIgnore
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setIsAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+
     @Override
     public String toString() {
-        return "Seat [id=" + id + ", row=" + row + ", column=" + column + ", isAvailable=" + isAvailable + "]";
+        return "Seat [id=" + id + ", row=" + row + ", column=" + column + "]";
     }
+
 
 
 }
