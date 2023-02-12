@@ -2,6 +2,7 @@ package cinema.web;
 
 import cinema.domain.Order;
 import cinema.domain.Seat;
+import cinema.domain.Stats;
 import cinema.domain.Token;
 import cinema.repo.CinemaRepository;
 import cinema.repo.OrderRepository;
@@ -11,14 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping()
@@ -109,6 +105,43 @@ public class OrderController {
 //                throw new SeatPurchaseException(e.getError());
             responseBody.put("error", e.getError());
             return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+
+        }
+    }
+
+    @PostMapping("/stats")
+    public ResponseEntity<Object> statsEndpoint(@RequestParam(required = false) String password)  {
+
+        HashMap<String, Object> responseBody = new HashMap<>();
+
+        try {
+
+            if (password == null || !password.equals("super_secret")) {
+                throw new OrderException("The password is wrong!", HttpStatus.UNAUTHORIZED);
+            }
+
+            List<Order> order = orderRepository.findAll();
+
+            if (order == null) {
+                throw new OrderException("No orders");
+            }
+            int numberOfPurchasedTickets = order.size();
+            int currentIncome = 0;
+            int numberOfAvailableSeats = 81 - numberOfPurchasedTickets;
+
+            for (Order o : order) {
+                currentIncome += o.getTicket().getPrice();
+            }
+
+            Stats stats = new Stats(currentIncome, numberOfAvailableSeats, numberOfPurchasedTickets);
+
+            return new ResponseEntity<>(stats, HttpStatus.OK);
+
+        } catch (OrderException e) {
+
+//                throw new SeatPurchaseException(e.getError());
+            responseBody.put("error", e.getError());
+            return new ResponseEntity<>(responseBody, e.getStatus());
 
         }
     }
