@@ -31,7 +31,6 @@ public class Seat {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "cinema_id",nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     private Cinema cinema;
 
     protected Seat() {
@@ -81,6 +80,7 @@ public class Seat {
     public void setColumn(int column) {
         this.column = column;
     }
+
 
     @JsonIgnore
     public boolean isAvailable() {

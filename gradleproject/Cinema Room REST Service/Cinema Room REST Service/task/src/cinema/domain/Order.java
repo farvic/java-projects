@@ -9,7 +9,7 @@ import java.util.UUID;
 public class Order {
     @Id
     @Column(name = "token")
-    private UUID token;
+    private String token;
 
     @JoinColumn(name = "seat_id", referencedColumnName = "seat_id")
     @OneToOne(cascade = CascadeType.ALL)
@@ -21,15 +21,15 @@ public class Order {
 
     public Order(Seat ticket) {
         this.ticket = ticket;
-        this.token = UUID.randomUUID();
+        this.token = UUID.randomUUID().toString();
     }
 
 
-    public UUID getToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(UUID token) {
+    public void setToken(String token) {
         this.token = token;
     }
 
@@ -38,7 +38,7 @@ public class Order {
     }
 
     public void setTicket(Seat ticket) {
-        this.ticket = ticket;
+        this.ticket = null;
     }
 
     @Override
